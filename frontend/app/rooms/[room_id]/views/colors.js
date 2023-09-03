@@ -1,4 +1,4 @@
-import { grey, red, blue } from '@material-ui/core/colors';
+import { grey, red, blue } from '@mui/material/colors';
 
 const colors = {
   closed: {

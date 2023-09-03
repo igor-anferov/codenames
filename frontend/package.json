@@ -1,0 +1,27 @@
+{
+  "name": "codenames",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.6",
+    "@mui/material": "^5.14.6",
+    "immutable": "^5.0.0-beta.2",
+    "next": "^13.4.19",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "compress": "for file in `find build -not -name '*.gz' -type f`; do gzip -cf9 \"$file\" > \"$file.gz\" && [ `cat \"$file.gz\" | wc -c` -lt `cat \"$file\" | wc -c` ] || rm \"$file.gz\"; done"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "eslint-config-next": "^13.4.19"
+  }
+}

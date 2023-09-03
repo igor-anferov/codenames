@@ -1,0 +1,6 @@
+services:
+  frontend:
+    build:
+      dockerfile: dev.Dockerfile
+    volumes:
+    - "./frontend:/app"

@@ -1,11 +1,16 @@
+'use client';
+
 import React from 'react';
 
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import { withRouter } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 
-function MainPage({ match, history }) {
+import { useRouter } from 'next/navigation';
+
+export default function RoomMainPage({ params }) {
+  const router = useRouter();
+
   return (
     <Box m='auto'>
       <Grid container
@@ -18,7 +23,7 @@ function MainPage({ match, history }) {
             variant="contained"
             size='large'
             onClick={() => {
-              history.push(match.url + '/views/players')
+              router.push(`/rooms/${params.room_id}/views/players`)
             }}
           >
             К полю для игроков
@@ -29,7 +34,7 @@ function MainPage({ match, history }) {
             variant="contained"
             size='large'
             onClick={() => {
-              history.push(match.url + '/views/captains')
+              router.push(`/rooms/${params.room_id}/views/captains`)
             }}
           >
             К полю для капитанов
@@ -39,5 +44,3 @@ function MainPage({ match, history }) {
     </Box>
   )
 }
-
-export default withRouter(MainPage)

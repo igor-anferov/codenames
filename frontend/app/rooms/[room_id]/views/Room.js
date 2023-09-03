@@ -1,10 +1,12 @@
-import React from 'react';
-import { withRouter, Switch, Route, Redirect } from "react-router-dom";
+'use client';
 
-import RoomMainPage from './RoomMainPage'
-import GameField from './GameField'
+import React from 'react';
 
 const { setIn } = require('immutable')
+
+import GameField from './GameField'
+import { withRouter } from '@/utils';
+
 
 class Room extends React.Component {
   state = {
@@ -50,7 +52,7 @@ class Room extends React.Component {
         game_id: '',
         connected: false,
       })
-      this.props.history.push('/rooms/' + this.props.roomId)
+      this.props.router.push('/rooms/' + this.props.params.room_id)
     }
 
     if (this.socket.readyState === WebSocket.OPEN) {
@@ -59,14 +61,14 @@ class Room extends React.Component {
   }
 
   wsconnect() {
-    this.socket = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/rooms/${this.props.roomId}/ws`)
+    this.socket = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/rooms/${this.props.params.room_id}/ws`)
 
     this.socket.addEventListener('message', msg => {
       const event = JSON.parse(msg.data)
       switch (event.type) {
       case 'GAME_STATE':
         if (this.state.game_id && event.data.game_id !== this.state.game_id) {
-          this.props.history.push('/rooms/' + this.props.roomId)
+          this.props.router.push('/rooms/' + this.props.params.room_id)
         }
         this.setState({
           ...event.data,
@@ -86,34 +88,15 @@ class Room extends React.Component {
   }
 
   render() {
-    const { roomId, match } = this.props
     const { field, game_id, connected } = this.state
     return (
-      <Switch>
-        <Route exact strict path={`${match.url}/views/players`}>
-          <GameField
-            roomId={ roomId }
-            game_id={ game_id }
-            field={ field }
-            connected={ connected }
-            sendEvent={ this.sendEvent }
-          />
-        </Route>
-        <Route exact strict path={`${match.url}/views/captains`}>
-          <GameField
-            roomId={ roomId }
-            game_id={ game_id }
-            field={ field }
-            connected={ connected }
-            sendEvent={ this.sendEvent }
-            is_captain
-          />
-        </Route>
-        <Route exact path={ match.url }>
-          <RoomMainPage/>
-        </Route>
-        <Redirect to={ match.url } />
-      </Switch>
+      <GameField
+        game_id={ game_id }
+        field={ field }
+        connected={ connected }
+        sendEvent={ this.sendEvent }
+        { ...this.props }
+      />
     )
   }
 }

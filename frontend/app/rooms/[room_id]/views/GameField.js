@@ -1,57 +1,63 @@
+'use client';
+
 import React from 'react';
 
-import Grid from '@material-ui/core/Grid';
-import Fab from '@material-ui/core/Fab';
-import Typography from '@material-ui/core/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
-import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
-import PeopleIcon from '@material-ui/icons/People';
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Fab from '@mui/material/Fab';
+import Typography from '@mui/material/Typography';
+import MenuIcon from '@mui/icons-material/Menu';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import NoMeetingRoomIcon from '@mui/icons-material/NoMeetingRoom';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import PeopleIcon from '@mui/icons-material/People';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import { withStyles } from '@material-ui/core/styles';
-import { withRouter } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 
+import { withRouter } from '@/utils';
 import Card from './Card';
 import Score from './Score';
 import colors from './colors';
 
-const styles = theme => ({
-  field: {
-    height: 'calc(100% - max(10vh, 36px))',
-    width: '100%',
-    margin: 0,
-    padding: `${theme.spacing(1)}px 0`,
-  },
-  row: {
-    marginLeft: 0,
-  },
-  scoreBoard: {
-    height: 'calc(max(10vh, 36px))',
-    width: '100%',
-  },
-  fab: {
-    fontSize: 'calc(max(6vh, 26px))',
-    backgroundColor: colors.white.normal.back,
-    color: colors.white.normal.text,
-    height: 'calc(max(10vh, 36px))',
-    width: 'calc(max(10vh, 36px))',
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    right: 0,
-    margin: '0 auto',
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
-  },
-})
+const StyledFieldGrid = styled(Grid)(({ theme }) => ({
+  height: 'calc(100% - max(10vh, 36px))',
+  width: '100%',
+  margin: 0,
+  padding: `0 ${theme.spacing(2)} ${theme.spacing(2)} 0`,
+}));
+
+const StyledRowGrid = styled(Grid)(({ theme }) => ({
+  //marginLeft: 0,
+  padding: -theme.spacing(2),
+}));
+
+const StyledScoreBoardGrid = styled(Grid)(({ theme }) => ({
+  height: 'calc(max(10vh, 36px))',
+  width: '100%',
+}));
+
+const StyledFab = styled(Fab)(({ theme }) => ({
+  fontSize: 'calc(max(6vh, 26px))',
+  backgroundColor: colors.white.normal.back,
+  color: colors.white.normal.text,
+  height: 'calc(max(10vh, 36px))',
+  width: 'calc(max(10vh, 36px))',
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  right: 0,
+  margin: '0 auto',
+}));
+
+const StyledBackdrop = styled(Backdrop)(({ theme }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  color: '#fff',
+}));
+
 
 class GameField extends React.Component {
   state = {
@@ -85,20 +91,18 @@ class GameField extends React.Component {
   }
 
   render() {
-    const { classes, field, game_id, roomId, is_captain, connected, sendEvent, history } = this.props
+    const { field, game_id, params, is_captain, connected, sendEvent } = this.props;
 
     return (
       <React.Fragment>
-        <Grid container
-          className={ classes.field }
+        <StyledFieldGrid container
           direction='column'
           spacing={ 2 }
           wrap='nowrap'
         >
           {field.map((row, i) => (
-            <Grid item container
+            <StyledRowGrid item container
               key={ i }
-              className={ classes.row }
               spacing={ 2 }
               wrap='nowrap'
               xs
@@ -122,11 +126,10 @@ class GameField extends React.Component {
                   }}/>
                 </Grid>
               ))}
-            </Grid>
+            </StyledRowGrid>
           ))}
-        </Grid>
-        <Grid container
-          className={ classes.scoreBoard }
+        </StyledFieldGrid>
+        <StyledScoreBoardGrid container
           alignItems='stretch'
           wrap='nowrap'
         >
@@ -140,10 +143,10 @@ class GameField extends React.Component {
               { this.countClosed(field, 'red') }
             </Score>
           </Grid>
-        </Grid>
-        <Fab className={ classes.fab } onClick={ event => this.openMenu(event.currentTarget) }>
+        </StyledScoreBoardGrid>
+        <StyledFab onClick={ event => this.openMenu(event.currentTarget) }>
           <MenuIcon fontSize='inherit'/>
-        </Fab>
+        </StyledFab>
         <Menu
           keepMounted
           anchorEl={ this.state.menuAnchorEl }
@@ -172,7 +175,7 @@ class GameField extends React.Component {
           </MenuItem>
           {is_captain ? (
             <MenuItem onClick={ () => {
-              history.push('/rooms/' + roomId + '/views/players')
+              this.props.router.push(`/rooms/${params.room_id}/views/players`)
               this.closeMenu()
             }}>
               <ListItemIcon>
@@ -184,7 +187,7 @@ class GameField extends React.Component {
             </MenuItem>
           ) : (
             <MenuItem onClick={ () => {
-              history.push('/rooms/' + roomId + '/views/captains')
+              this.props.router.push(`/rooms/${params.room_id}/views/captains`)
               this.closeMenu()
             }}>
               <ListItemIcon>
@@ -195,7 +198,7 @@ class GameField extends React.Component {
               </Typography>
             </MenuItem>
           )}
-          <MenuItem onClick={ () => history.push('/') }>
+          <MenuItem onClick={ () => this.props.router.push('/') }>
             <ListItemIcon>
               <NoMeetingRoomIcon/>
             </ListItemIcon>
@@ -204,12 +207,12 @@ class GameField extends React.Component {
             </Typography>
           </MenuItem>
         </Menu>
-        <Backdrop className={classes.backdrop} open={ !connected }>
+        <StyledBackdrop open={ !connected }>
           <CircularProgress color="inherit" />
-        </Backdrop>
+        </StyledBackdrop>
       </React.Fragment>
     )
   }
 }
 
-export default withRouter(withStyles(styles, { withTheme: true })(GameField))
+export default withRouter(GameField)

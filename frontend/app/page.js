@@ -1,19 +1,24 @@
+'use client';
+
 import React from 'react';
 
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import { withRouter } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+
+import { useRouter } from 'next/navigation';
 
 import { v4 as uuid } from 'uuid';
 
-function MainPage({ history }) {
+export default function MainPage() {
+  const router = useRouter();
+
   return (
     <Box m='auto'>
       <Button
         variant="contained"
         size='large'
         onClick={() => {
-          history.push('/rooms/' + uuid())
+          router.push('/rooms/' + uuid())
         }}
       >
         Создать комнату
@@ -21,5 +26,3 @@ function MainPage({ history }) {
     </Box>
   )
 }
-
-export default withRouter(MainPage)
